@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    generate-unique-name: false
+    name: tacocloud
+  application:
+    name: taco-cloud
+  thymeleaf:
+    cache: false
