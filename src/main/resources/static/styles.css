@@ -1,12 +1,29 @@
-.grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Два столбца */
-    gap: 20px; /* Расстояние между колонками */
+div.ingredient-group:nth-child(odd) {
+    float: left;
+    padding-right: 20px;
 }
 
-.ingredient-group {
-    border: 1px solid #ccc;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border-radius: 5px;
+div.ingredient-group:nth-child(even) {
+    float: left;
+    padding-right: 0;
+}
+
+div.ingredient-group {
+    width: 50%;
+}
+
+.grid:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+*, *:after, *:before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+span.validationError {
+    color: red;
 }
