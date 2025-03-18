@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "users")
+@Table(name = "`user`") // Используем обратные кавычки для MySQL
 @NoArgsConstructor(access=AccessLevel.PROTECTED, force=true)
 @RequiredArgsConstructor
 public class User implements UserDetails {
