@@ -1,11 +1,35 @@
+# Конфигурация для dev профиля (по умолчанию)
 spring:
   security:
     user:
       name: buzz
       password: infinity
+
   datasource:
     generate-unique-name: false
     name: tacocloud
+    url: jdbc:h2:mem:tacocloud
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+
+  main:
+    web-application-type: none
+
+  sql:
+    init:
+      mode: always
 
 taco:
   orders:
@@ -15,18 +39,41 @@ taco:
     codes:
       abcdef: 10
 
----
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
+# Конфигурация для prod профиля
+---
 spring:
   config:
     activate:
       on-profile: prod
 
-  datasource:
-    url: jdbc:mysql://localhost/tacocloud
-    username: tacouser
-    password: tacopassword
+  security:
+    user:
+      name: buzz
+      password: infinity
 
-logging:
-  level:
-    tacos: WARN
+  datasource:
+    generate-unique-name: false
+    name: tacocloud
+    url: jdbc:h2:mem:tacocloud  # Используется H2 для prod (или можно изменить на постоянное хранилище)
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+
+  logging:
+    level:
+      tacos: WARN

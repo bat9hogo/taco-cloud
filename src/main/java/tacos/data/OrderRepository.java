@@ -14,8 +14,4 @@ public interface OrderRepository
     List<TacoOrder> findByUserOrderByPlacedAtDesc(
             User user, Pageable pageable);
 
-  /*
-  List<Order> findByUserOrderByPlacedAtDesc(User user);
-   */
-
 }

@@ -83,29 +83,4 @@ public class OrderController {
         return "orderList";
     }
 
-  /*
-  @GetMapping
-  public String ordersForUser(
-      @AuthenticationPrincipal User user, Model model) {
-
-    Pageable pageable = PageRequest.of(0, 20);
-    model.addAttribute("orders",
-        orderRepo.findByUserOrderByPlacedAtDesc(user, pageable));
-
-    return "orderList";
-  }
-   */
-
-  /*
-  @GetMapping
-  public String ordersForUser(
-      @AuthenticationPrincipal User user, Model model) {
-
-    model.addAttribute("orders",
-        orderRepo.findByUserOrderByPlacedAtDesc(user));
-
-    return "orderList";
-  }
-   */
-
 }

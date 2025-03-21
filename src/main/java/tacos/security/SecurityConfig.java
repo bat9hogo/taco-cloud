@@ -1,66 +1,63 @@
 package tacos.security;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-import tacos.User;
-import tacos.data.UserRepository;
-
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+
+    private final UserDetailsService userDetailsService;
+
+    public SecurityConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
+
     @Bean
-    public UserDetailsService userDetailsService(UserRepository userRepo) {
-        return username -> {
-            User user = userRepo.findByUsername(username);
-            if (user != null) return user;
-            throw new UsernameNotFoundException("User ‘" + username + "’ not found");
-        };
-    }
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/design", "/orders", "/design").hasRole("USER")  // Вместо antMatchers()
-                        .anyRequest().permitAll()  // Все остальные запросы разрешены
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS).permitAll() // needed for Angular/CORS
+                        .requestMatchers("/api/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/ingredients").permitAll()
+                        .requestMatchers("/**").permitAll()
                 )
-                .formLogin(form -> form
-                        .loginPage("/login")  // Указание страницы логина
-                        .permitAll()  // Разрешение всем пользователям доступ к странице логина
+                .formLogin(login -> login
+                        .loginPage("/login")
+                        .permitAll()
+                )
+                .httpBasic(httpBasic -> httpBasic
+                        .realmName("Taco Cloud")
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/")  // URL после успешного выхода
-                        .permitAll()  // Разрешение всем пользователям доступ к выходу
+                        .logoutSuccessUrl("/")
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**")  // Отключение CSRF для H2
+                        .ignoringRequestMatchers("/h2-console/**", "/api/**")
                 )
                 .headers(headers -> headers
-                        // do not use any default headers unless explicitly listed
-                        .defaultsDisabled()
-                        .cacheControl(withDefaults())
+                        .frameOptions(frame -> frame.sameOrigin()) // For H2-Console
                 );
-
 
         return http.build();
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(); // NoOpPasswordEncoder устарел, лучше использовать BCrypt
+    }
 
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
 }
