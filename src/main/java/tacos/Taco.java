@@ -1,9 +1,8 @@
 package tacos;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import jakarta.persistence.Entity;
+import jakarta .persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,9 +11,8 @@ import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import org.springframework.data.rest.core.annotation.RestResource;
-
 import lombok.Data;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 @Data
 @Entity
@@ -33,14 +31,10 @@ public class Taco {
 
     @ManyToMany(targetEntity=Ingredient.class)
     @Size(min=1, message="You must choose at least 1 ingredient")
-    private List<Ingredient> ingredients = new ArrayList<>();
+    private List<Ingredient> ingredients;
 
     @PrePersist
     void createdAt() {
         this.createdAt = new Date();
-    }
-
-    public void addIngredient(Ingredient ingredient) {
-        this.ingredients.add(ingredient);
     }
 }

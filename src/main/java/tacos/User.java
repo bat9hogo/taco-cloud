@@ -2,16 +2,11 @@ package tacos;
 import java.util.Arrays;
 import java.util.Collection;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.
         SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,8 +14,9 @@ import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
-@NoArgsConstructor(access=AccessLevel.PROTECTED, force=true)
+@NoArgsConstructor(access=AccessLevel.PRIVATE, force=true)
 @RequiredArgsConstructor
+@Table(name="UserApp")
 public class User implements UserDetails {
 
     private static final long serialVersionUID = 1L;
@@ -30,7 +26,6 @@ public class User implements UserDetails {
     private Long id;
 
     private final String username;
-
     private final String password;
     private final String fullname;
     private final String street;
@@ -41,6 +36,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        System.out.println("Пользователь получает права: ROLE_USER");
         return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
